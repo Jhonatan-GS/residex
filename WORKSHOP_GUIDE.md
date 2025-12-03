@@ -6,6 +6,68 @@ Welcome to the workshop! You are the **Lead Engineer** for **Residex**, the inci
 
 ---
 
+> ⚠️ **Before You Begin: Software Engineering Fundamentals**
+>
+> AI coding assistants are powerful, but they work best when YOU understand core software engineering principles. Before diving in, familiarize yourself with these foundational concepts:
+>
+> | Principle | What It Means | Why It Matters for AI-Assisted Dev |
+> |-----------|---------------|-----------------------------------|
+> | **KISS** | Keep It Simple, Stupid | Tell the AI to use simple solutions; avoid over-engineering |
+> | **DRY** | Don't Repeat Yourself | Ask AI to identify and extract repeated code |
+> | **SOLID** | Single responsibility, Open/closed, Liskov substitution, Interface segregation, Dependency inversion | Guide AI to write maintainable, modular code |
+> | **YAGNI** | You Aren't Gonna Need It | Prevent AI from adding unnecessary features |
+> | **Separation of Concerns** | Each module handles one thing | Structure your prompts around single responsibilities |
+>
+> **Recommended Reading:**
+> - [SOLID Principles Explained](https://www.digitalocean.com/community/conceptual-articles/s-o-l-i-d-the-first-five-principles-of-object-oriented-design)
+> - [Clean Code Summary](https://gist.github.com/wojteklu/73c6914cc446146b8b533c0988cf8d29)
+> - [The Pragmatic Programmer Tips](https://pragprog.com/tips/)
+>
+> **Remember:** AI amplifies your skills. The better you understand these principles, the better you can guide the AI to write quality code.
+
+---
+
+> 🔀 **Git & Version Control Fundamentals**
+>
+> This workshop uses Git and GitHub extensively. If you're new to version control, take a moment to understand these core concepts:
+>
+> | Concept | What It Is | Why It Matters |
+> |---------|------------|----------------|
+> | **Repository (Repo)** | A project folder tracked by Git | Stores all your code and its history |
+> | **Commit** | A snapshot of your code at a point in time | Creates checkpoints you can return to |
+> | **Branch** | A parallel version of your code | Lets you work on features without breaking main code |
+> | **Fork** | Your personal copy of someone else's repo | Lets you contribute to projects you don't own |
+> | **Pull Request (PR)** | A request to merge your changes | How you contribute code back to a project |
+> | **Clone** | Download a repo to your local machine | Gets the code onto your computer |
+> | **Push** | Upload your commits to GitHub | Shares your changes with others |
+> | **Pull** | Download changes from GitHub | Gets others' changes onto your machine |
+>
+> **Essential Git Commands:**
+> ```bash
+> git status          # See what's changed
+> git add .           # Stage all changes for commit
+> git commit -m "msg" # Save a snapshot with a message
+> git push            # Upload to GitHub
+> git pull            # Download from GitHub
+> git checkout -b X   # Create and switch to branch X
+> git log --oneline   # See commit history
+> ```
+>
+> **The Golden Rules:**
+> 1. **Commit often** - Small, frequent commits are easier to understand and revert
+> 2. **Write good commit messages** - Future you will thank present you
+> 3. **Never commit to main** - Always use feature branches
+> 4. **Pull before you push** - Avoid merge conflicts
+>
+> **Recommended Resources:**
+> - [Git Handbook (GitHub)](https://docs.github.com/en/get-started/using-git/about-git)
+> - [Learn Git Branching (Interactive)](https://learngitbranching.js.org/)
+> - [Oh Shit, Git!?! (Fixing Mistakes)](https://ohshitgit.com/)
+> - [GitHub Flow Guide](https://docs.github.com/en/get-started/quickstart/github-flow)
+> - [Atlassian Git Tutorials](https://www.atlassian.com/git/tutorials)
+
+---
+
 ## The Scenario
 
 **Your Users:**
