@@ -409,13 +409,43 @@ Since this is your own fork, go ahead and merge the PR to your main branch.
 
 ## Exercise 5: Your Feature Contribution
 
-**Difficulty:** Open-ended | **Time:** 20-30 minutes | **Skill:** Feature Design & Implementation
+**Difficulty:** Open-ended | **Time:** 20-30 minutes | **Skill:** Feature Design & LLM-Assisted Development
 
 ### The Challenge
 
-Now it's YOUR turn to innovate! Think of a feature that would make Residex better, build it, and contribute it back to the original repository.
+Now it's YOUR turn to innovate! You'll learn how to properly build features using AI coding assistants like Claude Code - the same workflow used by professional developers.
 
-### 1. Create a New Branch
+### The LLM-Assisted Development Workflow
+
+```mermaid
+flowchart TB
+    subgraph phase1["Phase 1: Planning"]
+        A[Choose Feature] --> B[Write Mini-PRD]
+        B --> C[Break Into Tasks]
+    end
+
+    subgraph phase2["Phase 2: Context Engineering"]
+        C --> D[Provide Context to Claude]
+        D --> E[Ask Claude to Plan First]
+    end
+
+    subgraph phase3["Phase 3: Iterative Development"]
+        E --> F[Implement Task 1]
+        F --> G[Test & Verify]
+        G --> H{More Tasks?}
+        H -->|Yes| F
+        H -->|No| I[Review & Refine]
+    end
+
+    subgraph phase4["Phase 4: Contribution"]
+        I --> J[Commit & Push]
+        J --> K[Create PR]
+    end
+```
+
+---
+
+### Step 1: Create a New Branch
 
 ```bash
 git checkout main
@@ -423,9 +453,11 @@ git pull origin main
 git checkout -b feature/your-feature-name
 ```
 
-### 2. Choose Your Feature
+---
 
-Here are some ideas, or come up with your own:
+### Step 2: Choose Your Feature
+
+Pick one of these ideas, or come up with your own:
 
 | Feature Idea | Description |
 |--------------|-------------|
@@ -439,19 +471,165 @@ Here are some ideas, or come up with your own:
 | **Export to CSV** | Download incident reports |
 | **Your Own Idea!** | What would YOU want in an incident system? |
 
-### 3. Build It
+---
 
-**Prompt to Claude:**
-> "I want to add [YOUR FEATURE]. Here's what it should do: [DESCRIBE IT]. Help me implement this feature."
+### Step 3: Write a Mini-PRD (Product Requirements Document)
 
-### 4. Test It
+Before coding, write a short specification. This is **context engineering** - giving the AI the information it needs to help you effectively.
 
-Make sure your feature works:
-- [ ] No errors in the console
-- [ ] UI looks good and matches the existing style
-- [ ] Feature does what you intended
+**Template:**
 
-### 5. Commit & Push
+```markdown
+## Feature: [Name]
+
+### What it does
+[2-3 sentences describing the feature]
+
+### Why it's useful
+[The problem it solves for users]
+
+### Acceptance Criteria
+- [ ] [Specific behavior 1]
+- [ ] [Specific behavior 2]
+- [ ] [Specific behavior 3]
+
+### Technical Notes
+- Files likely affected: [e.g., actions.ts, IncidentCard.tsx]
+- New components needed: [e.g., FilterBar, SearchInput]
+- Data changes: [e.g., new field on incident object]
+```
+
+**Example Mini-PRD:**
+
+```markdown
+## Feature: Search & Filter
+
+### What it does
+Add a search box and filter buttons to the dashboard so managers
+can quickly find specific incidents by keyword or status.
+
+### Why it's useful
+When there are many incidents, managers waste time scrolling.
+They need to find specific incidents quickly during emergencies.
+
+### Acceptance Criteria
+- [ ] Search box filters incidents by description or location
+- [ ] Filter buttons: All, Open, Resolved
+- [ ] Filters update the list in real-time (no page refresh)
+- [ ] Clear button resets all filters
+
+### Technical Notes
+- Files likely affected: app/page.tsx, components/IncidentCard.tsx
+- New components needed: FilterBar.tsx, SearchInput.tsx
+- Data changes: None (filtering is client-side)
+```
+
+---
+
+### Step 4: Break Into Tasks
+
+Decompose your feature into small, specific tasks. This helps Claude (and you) stay focused.
+
+**Example Task Breakdown:**
+
+```markdown
+## Tasks for Search & Filter Feature
+
+1. Create FilterBar component with All/Open/Resolved buttons
+2. Create SearchInput component with search icon
+3. Add filter state to dashboard page
+4. Implement filter logic to show/hide incidents
+5. Implement search logic to match description/location
+6. Add clear button to reset filters
+7. Style components to match existing design
+```
+
+---
+
+### Step 5: Context Engineering - The Right Way to Prompt
+
+**Bad Prompt (vague, no context):**
+> "Add search to the dashboard"
+
+**Good Prompt (specific, contextual):**
+> "I'm adding a Search & Filter feature to the Residex incident dashboard.
+>
+> **Current state:** The dashboard shows all incidents in a list. There's no way to filter or search.
+>
+> **Goal:** Add a FilterBar component with three buttons (All, Open, Resolved) and a SearchInput component.
+>
+> **Files to reference:**
+> - `app/page.tsx` - the main dashboard
+> - `components/IncidentCard.tsx` - the incident display component
+>
+> **Task 1:** Create the FilterBar component with styled buttons that match the existing Tailwind design. It should accept `activeFilter` and `onFilterChange` props.
+>
+> Please start by reading the existing files to understand the patterns, then implement the FilterBar component."
+
+**Key Context Engineering Principles:**
+
+| Principle | Why It Matters |
+|-----------|----------------|
+| **Be specific** | "Add a button" vs "Add a blue primary button in the header" |
+| **Provide file references** | Claude can read the actual code to match patterns |
+| **One task at a time** | Smaller tasks = better results |
+| **Ask to plan first** | "Read the files and propose an approach before coding" |
+| **State the goal** | What should the end result look like? |
+
+---
+
+### Step 6: Ask Claude to Plan First
+
+Before implementing, ask Claude to analyze and plan:
+
+> "Before writing any code, please:
+> 1. Read the relevant files (page.tsx, IncidentCard.tsx)
+> 2. Identify the existing patterns and styles
+> 3. Propose an implementation approach
+> 4. List the specific changes you'll make
+>
+> I'll review your plan before we proceed."
+
+This prevents wasted effort and catches misunderstandings early.
+
+---
+
+### Step 7: Iterative Development
+
+Work through your tasks one at a time:
+
+```mermaid
+flowchart LR
+    A[Give Task] --> B[Claude Implements]
+    B --> C[You Test]
+    C --> D{Works?}
+    D -->|No| E[Describe Issue]
+    E --> B
+    D -->|Yes| F[Next Task]
+    F --> A
+```
+
+**After each task:**
+- Test the change in the browser
+- Check for console errors
+- Verify it matches the existing style
+- Commit if it works: `git add . && git commit -m "Add FilterBar component"`
+
+---
+
+### Step 8: Test Your Complete Feature
+
+Before pushing, verify everything works:
+
+- [ ] No errors in the browser console
+- [ ] Feature behaves as specified in your PRD
+- [ ] UI matches the existing Residex design
+- [ ] All acceptance criteria are met
+- [ ] Works with both light and dark themes
+
+---
+
+### Step 9: Commit & Push
 
 ```bash
 git add .
@@ -459,7 +637,9 @@ git commit -m "Feature: [Brief description of your feature]"
 git push origin feature/your-feature-name
 ```
 
-### 6. Create a PR to the Original Repo
+---
+
+### Step 10: Create a PR to the Original Repo
 
 This is the real deal - contributing to open source!
 
@@ -500,12 +680,27 @@ flowchart LR
 
 6. Click **"Create pull request"**
 
+---
+
+### LLM Development Cheat Sheet
+
+| Do This | Not This |
+|---------|----------|
+| Write a mini-PRD first | Jump straight to "build X" |
+| Break into small tasks | Ask for entire feature at once |
+| Provide file references | Assume Claude knows the codebase |
+| Ask to plan before coding | Skip planning, start implementing |
+| Test after each task | Wait until the end to test |
+| Describe issues specifically | Say "it doesn't work" |
+| Commit working increments | Make one giant commit |
+
 ### What You Learned
 
-- Designing features from scratch
-- Contributing to open source projects
-- Writing good PR descriptions
-- The full development workflow: branch → build → commit → PR
+- **Planning before coding** - Mini-PRDs focus your work and Claude's assistance
+- **Context engineering** - How to give AI the right information
+- **Task decomposition** - Breaking features into manageable pieces
+- **Iterative development** - Build, test, refine in small cycles
+- **Open source contribution** - The full workflow from idea to merged PR
 
 ---
 
@@ -529,7 +724,8 @@ Congratulations! You've completed the **Vibe Coding: Mission Critical** workshop
 2. **Separate code by privilege level** - Public vs Admin code should be isolated
 3. **Capture metadata** - Who, what, when creates accountability
 4. **Close the loop** - Notify users when their issues are resolved
-5. **Contribute back** - Open source makes everyone better
+5. **LLM-Assisted Development** - Plan first, provide context, iterate in small steps
+6. **Contribute back** - Open source makes everyone better
 
 ### Your Git Journey Today
 
