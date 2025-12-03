@@ -30,12 +30,10 @@ Building managers are reporting **"Ghost Incidents"** - they receive angry calls
 
 Go to the original repo on GitHub and click **"Fork"** to create your own copy.
 
-```
-https://github.com/<ORIGINAL_OWNER>/residex
-        ↓
-    Click "Fork"
-        ↓
-https://github.com/<YOUR_USERNAME>/residex
+```mermaid
+flowchart LR
+    A[Original Repo] -->|Fork| B[Your Fork]
+    B -->|Clone| C[Local Machine]
 ```
 
 ### 2. Clone Your Fork
@@ -74,30 +72,35 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 Throughout the workshop, you'll follow a professional Git workflow:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Original Repo                Your Fork                     │
-│  (upstream)                   (origin)                      │
-│       │                           │                         │
-│       │    Fork                   │                         │
-│       ├──────────────────────────>│                         │
-│       │                           │                         │
-│       │                     main  │                         │
-│       │                       │   │                         │
-│       │                       │   │  branch: workshop/name  │
-│       │                       │   ├────────────┐            │
-│       │                       │   │            │            │
-│       │                       │   │   work     │            │
-│       │                       │   │   work     │            │
-│       │                       │   │   work     │            │
-│       │                       │   │            │            │
-│       │                       │   │<───────────┘            │
-│       │                       │   │  PR to YOUR main        │
-│       │                       │<──┤                         │
-│       │                       │   │                         │
-│       │<──────────────────────────┤  PR to original         │
-│       │     (Exercise 5)      │   │  (your new feature!)    │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph upstream["Original Repo (upstream)"]
+        UM[main]
+    end
+
+    subgraph origin["Your Fork (origin)"]
+        OM[main]
+        WB[workshop/your-name]
+        FB[feature/your-feature]
+    end
+
+    subgraph local["Local Machine"]
+        LM[main]
+        LWB[workshop/your-name]
+        LFB[feature/your-feature]
+    end
+
+    UM -->|1. Fork| OM
+    OM -->|2. Clone| LM
+    LM -->|3. Branch| LWB
+    LWB -->|4. Code & Commit| LWB
+    LWB -->|5. Push| WB
+    WB -->|6. PR| OM
+    OM -->|7. Merge| OM
+    LM -->|8. New Branch| LFB
+    LFB -->|9. Code & Commit| LFB
+    LFB -->|10. Push| FB
+    FB -->|11. PR to Original| UM
 ```
 
 **After each exercise:**
@@ -127,6 +130,19 @@ git commit -m "Exercise X: description of what you did"
 You have to manually refresh the entire page to see the new incident. In an emergency where seconds matter, this is unacceptable.
 
 ### The Root Cause
+
+```mermaid
+sequenceDiagram
+    participant Tenant
+    participant Server
+    participant Dashboard
+
+    Tenant->>Server: Submit Incident
+    Server->>Server: Add to database ✅
+    Note over Dashboard: Still showing old data ❌
+    Dashboard-->>Dashboard: Cache is stale
+    Tenant->>Dashboard: Why isn't it showing?!
+```
 
 Next.js Server Actions modify data on the server, but the client doesn't know the data changed. The UI is "stale" - it shows old data until you force a refresh.
 
@@ -182,6 +198,22 @@ export async function resolveIncident(id: number) { ... }
 
 Separate the code by privilege level:
 
+```mermaid
+flowchart LR
+    subgraph before["❌ Before: Mixed Permissions"]
+        A[actions.ts] --> B[submitIncident]
+        A --> C[resolveIncident]
+    end
+
+    subgraph after["✅ After: Separated"]
+        D[actions.ts] --> E[tenant.ts]
+        D --> F[admin.ts]
+        E --> G[submitIncident]
+        F --> H[resolveIncident]
+        F --> I[deleteIncident]
+    end
+```
+
 1. Create `lib/services/tenant.ts` - Public functions (incident submission)
 2. Create `lib/services/admin.ts` - Protected functions (resolve, delete, assign)
 3. Keep `app/actions.ts` as thin wrappers that call these services
@@ -234,6 +266,22 @@ This is a problem for accountability. If a tenant calls back asking "Who fixed m
 
 Create a proper resolution workflow:
 
+```mermaid
+sequenceDiagram
+    participant Manager
+    participant Modal
+    participant Server
+    participant Card
+
+    Manager->>Modal: Click "Resolve"
+    Modal->>Modal: Show resolution form
+    Manager->>Modal: Enter note + Submit
+    Modal->>Server: Save resolution data
+    Note over Server: Save: note, resolver, timestamp
+    Server->>Card: Update incident
+    Card->>Card: Show resolution info
+```
+
 1. When clicking "Resolve", show a small form/modal
 2. Capture a **resolution note** (e.g., "Replaced faulty pipe in unit 404")
 3. Save the **resolver name** and **timestamp**
@@ -282,6 +330,20 @@ The tenant is left in the dark, which leads to frustrated calls to the front des
 
 When an incident is resolved, **automatically notify the tenant**:
 
+```mermaid
+flowchart LR
+    A[Manager clicks Resolve] --> B[Resolution Modal]
+    B --> C[Submit with Note]
+    C --> D[Update Status]
+    D --> E[Auto-send Notification]
+    E --> F[Show Toast]
+    E --> G[Add Badge to Card]
+
+    style E fill:#4ade80
+    style F fill:#60a5fa
+    style G fill:#60a5fa
+```
+
 1. Create a `sendNotification()` function that logs/mocks sending a message
 2. Call it automatically when an incident is resolved
 3. Show a **toast notification** on the dashboard: "Tenant notified successfully"
@@ -289,20 +351,6 @@ When an incident is resolved, **automatically notify the tenant**:
 
 **Prompt to Claude:**
 > "When an incident is marked as resolved, automatically send a notification to the tenant. Create a mock sendNotification function that logs the message to the console. Show a toast notification on the dashboard confirming the tenant was notified. Add a 'Notified' badge or icon to the resolved incident card."
-
-### The Flow
-
-```
-Manager clicks "Resolve" → Adds resolution note → Submits
-                                    ↓
-                     Incident status → "Resolved"
-                                    ↓
-                     Auto-trigger: sendNotification()
-                                    ↓
-                     Toast: "Tenant notified successfully"
-                                    ↓
-                     Card shows: ✅ Resolved  📧 Notified
-```
 
 ### Success Criteria
 
@@ -330,6 +378,13 @@ git commit -m "Exercise 4: Add automatic tenant notification on resolve"
 ## Create Your First Pull Request
 
 You've completed the core exercises! Now let's create a PR to your own fork.
+
+```mermaid
+flowchart LR
+    A[Local Branch] -->|git push| B[Remote Branch]
+    B -->|Create PR| C[Your Main]
+    C -->|Merge| D[Updated Main]
+```
 
 ### 1. Push Your Branch
 
@@ -408,6 +463,15 @@ git push origin feature/your-feature-name
 
 This is the real deal - contributing to open source!
 
+```mermaid
+flowchart LR
+    A[Your Fork] -->|PR| B[Original Repo]
+    B -->|Review| C{Approved?}
+    C -->|Yes| D[Merged!]
+    C -->|Feedback| E[Update PR]
+    E --> C
+```
+
 1. Go to the **original repo**: `https://github.com/<ORIGINAL_OWNER>/residex`
 2. Click **"New pull request"**
 3. Click **"compare across forks"**
@@ -469,8 +533,18 @@ Congratulations! You've completed the **Vibe Coding: Mission Critical** workshop
 
 ### Your Git Journey Today
 
-```
-Fork → Clone → Branch → Code → Commit → Push → PR → Merge → Contribute!
+```mermaid
+flowchart LR
+    A[Fork] --> B[Clone]
+    B --> C[Branch]
+    C --> D[Code]
+    D --> E[Commit]
+    E --> F[Push]
+    F --> G[PR]
+    G --> H[Merge]
+    H --> I[Contribute!]
+
+    style I fill:#4ade80
 ```
 
 ---
