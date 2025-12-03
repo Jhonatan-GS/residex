@@ -18,22 +18,23 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  Lock,
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Incidents", href: "/incidents", icon: AlertTriangle, badge: 3 },
-  { name: "Residents", href: "/residents", icon: Users },
-  { name: "Reports", href: "/reports", icon: FileText },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "Messages", href: "/messages", icon: MessageSquare, badge: 5 },
-  { name: "Schedule", href: "/schedule", icon: Calendar },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard, enabled: true },
+  { name: "Incidents", href: "#", icon: AlertTriangle, badge: 3, enabled: false },
+  { name: "Residents", href: "#", icon: Users, enabled: false },
+  { name: "Reports", href: "#", icon: FileText, enabled: false },
+  { name: "Analytics", href: "#", icon: BarChart3, enabled: false },
+  { name: "Messages", href: "#", icon: MessageSquare, badge: 5, enabled: false },
+  { name: "Schedule", href: "#", icon: Calendar, enabled: false },
 ];
 
 const secondaryNav = [
-  { name: "Notifications", href: "/notifications", icon: Bell },
-  { name: "Settings", href: "/settings", icon: Settings },
-  { name: "Help & Support", href: "/help", icon: HelpCircle },
+  { name: "Notifications", href: "#", icon: Bell, enabled: false },
+  { name: "Settings", href: "#", icon: Settings, enabled: false },
+  { name: "Help & Support", href: "#", icon: HelpCircle, enabled: false },
 ];
 
 export default function Sidebar() {
@@ -86,35 +87,57 @@ export default function Sidebar() {
         </div>
 
         {navigation.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href && item.enabled;
+
+          if (item.enabled) {
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative ${
+                  isActive
+                    ? "bg-indigo-500/10 text-indigo-400"
+                    : "text-[var(--foreground-muted)] hover:bg-[var(--surface-elevated)] hover:text-[var(--foreground)]"
+                }`}
+              >
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-500 rounded-r-full" />
+                )}
+                <item.icon className={`w-5 h-5 shrink-0 ${isActive ? "text-indigo-400" : ""}`} />
+                {!collapsed && (
+                  <>
+                    <span className="font-medium">{item.name}</span>
+                    {item.badge && (
+                      <span className="ml-auto bg-red-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">
+                        {item.badge}
+                      </span>
+                    )}
+                  </>
+                )}
+                {collapsed && item.badge && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+                )}
+              </Link>
+            );
+          }
+
+          // Disabled navigation item
           return (
-            <Link
+            <div
               key={item.name}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative ${
-                isActive
-                  ? "bg-indigo-500/10 text-indigo-400"
-                  : "text-[var(--foreground-muted)] hover:bg-[var(--surface-elevated)] hover:text-[var(--foreground)]"
-              }`}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[var(--foreground-subtle)] cursor-not-allowed opacity-60 relative"
             >
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-500 rounded-r-full" />
-              )}
-              <item.icon className={`w-5 h-5 shrink-0 ${isActive ? "text-indigo-400" : ""}`} />
+              <item.icon className="w-5 h-5 shrink-0" />
               {!collapsed && (
                 <>
                   <span className="font-medium">{item.name}</span>
-                  {item.badge && (
-                    <span className="ml-auto bg-red-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">
-                      {item.badge}
-                    </span>
-                  )}
+                  <Lock className="w-3 h-3 ml-auto text-[var(--foreground-subtle)]" />
                 </>
               )}
-              {collapsed && item.badge && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+              {collapsed && (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-[var(--foreground-subtle)] rounded-full" />
               )}
-            </Link>
+            </div>
           );
         })}
 
@@ -130,20 +153,38 @@ export default function Sidebar() {
         </div>
 
         {secondaryNav.map((item) => {
-          const isActive = pathname === item.href;
+          if (item.enabled) {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
+                  isActive
+                    ? "bg-indigo-500/10 text-indigo-400"
+                    : "text-[var(--foreground-muted)] hover:bg-[var(--surface-elevated)] hover:text-[var(--foreground)]"
+                }`}
+              >
+                <item.icon className="w-5 h-5 shrink-0" />
+                {!collapsed && <span className="font-medium">{item.name}</span>}
+              </Link>
+            );
+          }
+
+          // Disabled navigation item
           return (
-            <Link
+            <div
               key={item.name}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-indigo-500/10 text-indigo-400"
-                  : "text-[var(--foreground-muted)] hover:bg-[var(--surface-elevated)] hover:text-[var(--foreground)]"
-              }`}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[var(--foreground-subtle)] cursor-not-allowed opacity-60"
             >
               <item.icon className="w-5 h-5 shrink-0" />
-              {!collapsed && <span className="font-medium">{item.name}</span>}
-            </Link>
+              {!collapsed && (
+                <>
+                  <span className="font-medium">{item.name}</span>
+                  <Lock className="w-3 h-3 ml-auto text-[var(--foreground-subtle)]" />
+                </>
+              )}
+            </div>
           );
         })}
       </nav>
