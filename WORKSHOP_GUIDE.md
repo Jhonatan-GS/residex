@@ -18,31 +18,97 @@ Building managers are reporting **"Ghost Incidents"** - they receive angry calls
 **Your Mission:**
 1. Fix the critical sync bug
 2. Secure the application architecture
-3. Implement emergency response features
-4. Add intelligent dispatching
+3. Add proper resolution workflow
+4. Implement automatic tenant notifications
+5. Build your own feature and contribute it back!
 
 ---
 
 ## Getting Started
 
-### 1. Clone & Install
-```bash
-git clone <YOUR_REPO_URL>
-cd residex
-npm install
+### 1. Fork the Repository
+
+Go to the original repo on GitHub and click **"Fork"** to create your own copy.
+
+```
+https://github.com/<ORIGINAL_OWNER>/residex
+        ↓
+    Click "Fork"
+        ↓
+https://github.com/<YOUR_USERNAME>/residex
 ```
 
-### 2. Run the App
+### 2. Clone Your Fork
+
 ```bash
+git clone https://github.com/<YOUR_USERNAME>/residex.git
+cd residex
+```
+
+### 3. Create a Feature Branch
+
+**Important:** Never work directly on `main`. Create a branch for your work:
+
+```bash
+git checkout -b workshop/your-name
+```
+
+### 4. Install & Run
+
+```bash
+npm install
 npm run dev
 ```
 
-### 3. Open the Dashboard
+### 5. Open the Dashboard
+
 Visit [http://localhost:3000](http://localhost:3000)
 
 **What You'll See:**
 - **Left Side**: Manager Dashboard with incident feed and stats
 - **Right Side**: Collapsible phone mockup (click the "Tenant App" tab to show/hide)
+
+---
+
+## Git Workflow
+
+Throughout the workshop, you'll follow a professional Git workflow:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Original Repo                Your Fork                     │
+│  (upstream)                   (origin)                      │
+│       │                           │                         │
+│       │    Fork                   │                         │
+│       ├──────────────────────────>│                         │
+│       │                           │                         │
+│       │                     main  │                         │
+│       │                       │   │                         │
+│       │                       │   │  branch: workshop/name  │
+│       │                       │   ├────────────┐            │
+│       │                       │   │            │            │
+│       │                       │   │   work     │            │
+│       │                       │   │   work     │            │
+│       │                       │   │   work     │            │
+│       │                       │   │            │            │
+│       │                       │   │<───────────┘            │
+│       │                       │   │  PR to YOUR main        │
+│       │                       │<──┤                         │
+│       │                       │   │                         │
+│       │<──────────────────────────┤  PR to original         │
+│       │     (Exercise 5)      │   │  (your new feature!)    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**After each exercise:**
+```bash
+git add .
+git commit -m "Exercise X: description of what you did"
+```
+
+**After Exercise 4:** Create a PR to YOUR fork's main branch.
+
+**After Exercise 5:** Create a PR to the ORIGINAL repo with your new feature!
 
 ---
 
@@ -78,6 +144,13 @@ Next.js Server Actions modify data on the server, but the client doesn't know th
 - [ ] Submit an incident from the phone mockup
 - [ ] It appears instantly on the dashboard (no refresh needed)
 - [ ] Resolving an incident also updates instantly
+
+### Commit Your Work
+
+```bash
+git add .
+git commit -m "Exercise 1: Fix ghost incident bug with revalidatePath"
+```
 
 ### What You Learned
 
@@ -129,6 +202,13 @@ Add a mock authentication check:
 - [ ] `app/actions.ts` is now a thin wrapper
 - [ ] (Bonus) Admin functions check for authorization
 
+### Commit Your Work
+
+```bash
+git add .
+git commit -m "Exercise 2: Refactor actions for security separation"
+```
+
 ### What You Learned
 
 - Separation of concerns improves security
@@ -137,150 +217,264 @@ Add a mock authentication check:
 
 ---
 
-## Exercise 3: The Panic Button
+## Exercise 3: Resolution Workflow
 
-**Difficulty:** Medium | **Time:** 15-20 minutes | **Skill:** Interactive UI Components
+**Difficulty:** Medium | **Time:** 15-20 minutes | **Skill:** Forms & Data Management
 
 ### The Problem
 
-In a fire or active security threat, filling out a form is too slow. Tenants need a **one-tap emergency solution**.
+Currently, clicking "Resolve" just silently changes the status. There's no record of:
+- **What** was done to fix it
+- **Who** resolved it
+- **When** it was resolved
 
-Look at the phone mockup - there's already an SOS button at the bottom, but it's just a visual placeholder. **It doesn't actually do anything.**
+This is a problem for accountability. If a tenant calls back asking "Who fixed my leak?", the manager has no information.
 
 ### Your Task
 
-Make the SOS button functional with these requirements:
+Create a proper resolution workflow:
 
-1. **Hold-to-Activate**: User must hold the button for 3 seconds (prevents accidental triggers)
-2. **Visual Feedback**: Show a progress ring or animation while holding
-3. **Auto-Submit**: After 3 seconds, automatically submit a critical incident with:
-   - Type: "Fire" (or allow selection)
-   - Description: "EMERGENCY SOS ACTIVATED"
-   - Location: "Unknown - GPS Pending"
-   - Priority: "Critical"
+1. When clicking "Resolve", show a small form/modal
+2. Capture a **resolution note** (e.g., "Replaced faulty pipe in unit 404")
+3. Save the **resolver name** and **timestamp**
+4. Display this information on the resolved incident card
 
 **Prompt to Claude:**
-> "The SOS button in PhoneMockup.tsx is just a visual placeholder. Make it functional: when the user holds it for 3 seconds, it should submit an emergency incident automatically. Add a circular progress animation that fills up while holding. If they release early, cancel the action."
-
-### Bonus Challenge
-
-> "Add haptic feedback simulation - make the button pulse or vibrate visually when the emergency is triggered."
+> "When a manager clicks the resolve button, show a modal or inline form asking for a resolution note. Save the note along with who resolved it (use 'John Doe' as the mock user) and the current timestamp. Display this resolution info on the incident card when it's resolved."
 
 ### Success Criteria
 
-- [ ] Holding the SOS button shows a progress animation
-- [ ] Releasing early cancels the action
-- [ ] After 3 seconds, an emergency incident appears on the dashboard
-- [ ] The incident has "Critical" priority
+- [ ] Clicking resolve opens a form/modal for the resolution note
+- [ ] Submitting saves the note, resolver name, and timestamp
+- [ ] Resolved incidents display: "Resolved by John Doe at 3:45 PM - Fixed the leak"
+- [ ] The form can be cancelled without resolving
+
+### Commit Your Work
+
+```bash
+git add .
+git commit -m "Exercise 3: Add resolution workflow with notes"
+```
 
 ### What You Learned
 
-- Press-and-hold interactions for safety-critical actions
-- CSS animations for user feedback
-- Connecting UI components to server actions
+- Modal/form patterns in React
+- Enriching data models with metadata
+- Creating audit trails for accountability
 
 ---
 
-## Exercise 4: AI Dispatcher
+## Exercise 4: Automatic Tenant Notification
 
-**Difficulty:** Hard | **Time:** 20-30 minutes | **Skill:** AI Integration & Business Logic
+**Difficulty:** Medium | **Time:** 15-20 minutes | **Skill:** Workflows & User Feedback
 
 ### The Problem
 
-Managers are overwhelmed. They see incidents like:
-- "Smoke in the hallway"
-- "Suspicious person in parking garage"
-- "Water dripping from ceiling"
+When a manager resolves an incident, the tenant has no idea. They reported "Water leak in Apt 404" and then... silence.
 
-For each one, they manually have to:
-1. Read the description
-2. Determine priority
-3. Assign to the right team (Fire Dept, Security, Plumber)
+- Did anyone see my report?
+- Is someone coming?
+- Was it fixed?
 
-This takes precious time in emergencies.
+The tenant is left in the dark, which leads to frustrated calls to the front desk.
 
 ### Your Task
 
-Create an intelligent auto-dispatch system:
+When an incident is resolved, **automatically notify the tenant**:
 
-1. Create a function that analyzes incident descriptions
-2. Automatically set priority based on keywords
-3. Auto-assign to the appropriate response team
-
-**Keyword Logic:**
-| Keywords | Priority | Assign To |
-|----------|----------|-----------|
-| fire, smoke, burning, flames | Critical | Fire Department |
-| intruder, suspicious, threat, weapon | Critical | Security |
-| leak, water, flooding, drip | High | Plumbing |
-| broken, stuck, noise, malfunction | Medium | Maintenance |
-| other | Low | General |
+1. Create a `sendNotification()` function that logs/mocks sending a message
+2. Call it automatically when an incident is resolved
+3. Show a **toast notification** on the dashboard: "Tenant notified successfully"
+4. Add a **"Notified" badge** to the incident card
 
 **Prompt to Claude:**
-> "Create an autoDispatch function in lib/services/admin.ts. It should analyze the incident description and automatically set the priority and assignedTo fields based on keywords. Integrate this into the submitIncident flow so new incidents are auto-triaged."
+> "When an incident is marked as resolved, automatically send a notification to the tenant. Create a mock sendNotification function that logs the message to the console. Show a toast notification on the dashboard confirming the tenant was notified. Add a 'Notified' badge or icon to the resolved incident card."
 
-### Bonus Challenge
+### The Flow
 
-> "Instead of keyword matching, use an actual AI API call (mock it for now) that returns a structured response with priority and assignment recommendations."
+```
+Manager clicks "Resolve" → Adds resolution note → Submits
+                                    ↓
+                     Incident status → "Resolved"
+                                    ↓
+                     Auto-trigger: sendNotification()
+                                    ↓
+                     Toast: "Tenant notified successfully"
+                                    ↓
+                     Card shows: ✅ Resolved  📧 Notified
+```
 
 ### Success Criteria
 
-- [ ] Submit: "There's smoke coming from apartment 302"
-  - Priority should be: Critical
-  - Assigned to: Fire Department
-- [ ] Submit: "Water is leaking from the ceiling"
-  - Priority should be: High
-  - Assigned to: Plumbing
-- [ ] Submit: "Someone suspicious is in the lobby"
-  - Priority should be: Critical
-  - Assigned to: Security
+- [ ] Resolving an incident triggers the notification automatically
+- [ ] Console shows: "Notification sent to tenant: Your incident #X has been resolved"
+- [ ] A toast appears on the dashboard confirming notification was sent
+- [ ] The incident card shows both "Resolved" and "Notified" indicators
+
+### Commit Your Work
+
+```bash
+git add .
+git commit -m "Exercise 4: Add automatic tenant notification on resolve"
+```
 
 ### What You Learned
 
-- AI-assisted decision making
-- Keyword extraction and classification
-- Reducing cognitive load on operators
+- Chaining actions (resolve → notify)
+- Toast notification patterns
+- Visual feedback for background operations
+- Building complete user workflows
+
+---
+
+## Create Your First Pull Request
+
+You've completed the core exercises! Now let's create a PR to your own fork.
+
+### 1. Push Your Branch
+
+```bash
+git push origin workshop/your-name
+```
+
+### 2. Create the PR
+
+1. Go to your fork on GitHub: `https://github.com/<YOUR_USERNAME>/residex`
+2. Click **"Compare & pull request"**
+3. Set the base branch to `main` (your fork's main)
+4. Title: `Workshop Exercises 1-4: [Your Name]`
+5. Description: Summarize what you implemented
+6. Click **"Create pull request"**
+
+### 3. Merge It!
+
+Since this is your own fork, go ahead and merge the PR to your main branch.
+
+---
+
+## Exercise 5: Your Feature Contribution
+
+**Difficulty:** Open-ended | **Time:** 20-30 minutes | **Skill:** Feature Design & Implementation
+
+### The Challenge
+
+Now it's YOUR turn to innovate! Think of a feature that would make Residex better, build it, and contribute it back to the original repository.
+
+### 1. Create a New Branch
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/your-feature-name
+```
+
+### 2. Choose Your Feature
+
+Here are some ideas, or come up with your own:
+
+| Feature Idea | Description |
+|--------------|-------------|
+| **Incident Priority Escalation** | Auto-escalate to Critical if not resolved in 10 minutes |
+| **Search & Filter** | Add search box and filter buttons (All/Open/Resolved) |
+| **Incident Categories** | Add color-coded categories (Plumbing, Electrical, Security) |
+| **Resolution Templates** | Quick-select common resolutions |
+| **Incident Timeline** | Show history: Created → Updated → Resolved → Notified |
+| **Statistics Panel** | Show charts: incidents by type, avg resolution time |
+| **Tenant Feedback** | Let tenants rate the resolution (1-5 stars) |
+| **Export to CSV** | Download incident reports |
+| **Your Own Idea!** | What would YOU want in an incident system? |
+
+### 3. Build It
+
+**Prompt to Claude:**
+> "I want to add [YOUR FEATURE]. Here's what it should do: [DESCRIBE IT]. Help me implement this feature."
+
+### 4. Test It
+
+Make sure your feature works:
+- [ ] No errors in the console
+- [ ] UI looks good and matches the existing style
+- [ ] Feature does what you intended
+
+### 5. Commit & Push
+
+```bash
+git add .
+git commit -m "Feature: [Brief description of your feature]"
+git push origin feature/your-feature-name
+```
+
+### 6. Create a PR to the Original Repo
+
+This is the real deal - contributing to open source!
+
+1. Go to the **original repo**: `https://github.com/<ORIGINAL_OWNER>/residex`
+2. Click **"New pull request"**
+3. Click **"compare across forks"**
+4. Set:
+   - Base repository: `<ORIGINAL_OWNER>/residex` (base: `main`)
+   - Head repository: `<YOUR_USERNAME>/residex` (compare: `feature/your-feature-name`)
+5. Write a great PR description:
+
+```markdown
+## Feature: [Your Feature Name]
+
+### What it does
+[Describe the feature in 2-3 sentences]
+
+### Why it's useful
+[Explain the value this adds to Residex]
+
+### Screenshots
+[Add screenshots if it's a UI feature]
+
+### How to test
+1. [Step 1]
+2. [Step 2]
+3. [Expected result]
+```
+
+6. Click **"Create pull request"**
+
+### What You Learned
+
+- Designing features from scratch
+- Contributing to open source projects
+- Writing good PR descriptions
+- The full development workflow: branch → build → commit → PR
 
 ---
 
 ## Wrap Up
 
-Congratulations! You've built a **Mission Critical** system:
+Congratulations! You've completed the **Vibe Coding: Mission Critical** workshop!
 
-| Exercise | Skill | Impact |
-|----------|-------|--------|
-| Ghost Incident | Debugging | Fixed real-time sync |
-| Security Architecture | Refactoring | Protected admin functions |
-| Panic Button | UI/UX | Enabled one-tap emergencies |
-| AI Dispatcher | AI Integration | Automated triage |
+### What You Built
+
+| Exercise | Feature | Real-World Impact |
+|----------|---------|-------------------|
+| 1. Ghost Incident | Real-time sync | Managers see incidents instantly |
+| 2. Security Architecture | Privilege separation | Protected admin operations |
+| 3. Resolution Workflow | Audit trail | Accountability & documentation |
+| 4. Auto-Notification | Tenant communication | Happy tenants, fewer calls |
+| 5. Your Feature | Your innovation! | Your contribution to the project |
 
 ### Key Takeaways
 
 1. **Server Actions need cache invalidation** - Always `revalidatePath()` after mutations
-2. **Separate concerns by privilege level** - Public vs Admin code should be isolated
-3. **Safety-critical UI needs confirmation** - Hold-to-activate prevents accidents
-4. **AI can reduce cognitive load** - Auto-classification speeds up response times
+2. **Separate code by privilege level** - Public vs Admin code should be isolated
+3. **Capture metadata** - Who, what, when creates accountability
+4. **Close the loop** - Notify users when their issues are resolved
+5. **Contribute back** - Open source makes everyone better
 
----
+### Your Git Journey Today
 
-## Bonus Challenges
-
-If you finish early, try these:
-
-### Real-Time Updates
-> "Add WebSocket or Server-Sent Events so the dashboard updates automatically when new incidents come in, without polling."
-
-### Incident History
-> "Add a panel that shows resolved incidents with timestamps and who resolved them."
-
-### Mobile Notifications
-> "Add a mock push notification system that alerts managers when a Critical incident is submitted."
-
-### Dark/Light Mode
-> "The app already has a theme toggle. Add more theme options or customize the color palette."
+```
+Fork → Clone → Branch → Code → Commit → Push → PR → Merge → Contribute!
+```
 
 ---
 
 **Happy Vibe Coding!**
 
-*This is enterprise development - where code quality saves lives.*
+*This is enterprise development - where good code saves time, and great contributions help everyone.*
