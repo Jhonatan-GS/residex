@@ -24,7 +24,7 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard, enabled: true },
   { name: "Incidents", href: "#", icon: AlertTriangle, badge: 3, enabled: false },
-  { name: "Residents", href: "#", icon: Users, enabled: false },
+  { name: "Residents", href: "/residents", icon: Users, enabled: true },
   { name: "Reports", href: "#", icon: FileText, enabled: false },
   { name: "Analytics", href: "#", icon: BarChart3, enabled: false },
   { name: "Messages", href: "#", icon: MessageSquare, badge: 5, enabled: false },
