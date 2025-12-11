@@ -101,7 +101,7 @@ export default function IncidentCard({ incident }: IncidentCardProps) {
                 <span className="flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   Creado:{" "}
-                  {new Date(incident.createdAt).toLocaleTimeString([], {
+                  {new Date(incident.createdAt).toLocaleTimeString("es-ES", {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
@@ -110,7 +110,7 @@ export default function IncidentCard({ incident }: IncidentCardProps) {
                   <span className="flex items-center gap-1 text-emerald-400">
                     <CheckCircle2 className="w-3 h-3" />
                     Resuelto:{" "}
-                    {new Date(incident.resolvedAt).toLocaleTimeString([], {
+                    {new Date(incident.resolvedAt).toLocaleTimeString("es-ES", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
